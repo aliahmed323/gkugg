@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموسوعة الطبية الشاملة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --danger: #ef4444;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        
+        body {
+            background: #f1f5f9;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--dark);
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), #1e40af);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Tabs */
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn {
+            background: white; border: none; padding: 12px 30px; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; color: #64748b;
+            transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .tab-btn.active { background: var(--primary); color: white; transform: scale(1.05); }
+
+        /* Cards & Grid */
+        .content-section { display: none; animation: fadeIn 0.5s; }
+        .content-section.active { display: block; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--glass);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            padding: 20px;
+            background: rgba(255,255,255,0.8);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .doc-name { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+        .doc-badge { font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; background: #e2e8f0; color: #64748b; }
+        .total-time { background: var(--dark); color: white; padding: 6px 15px; border-radius: 8px; font-weight: 700; }
+
+        /* Accordion */
+        .accordion-item { border-bottom: 1px solid #f1f5f9; }
+        .accordion-btn {
+            width: 100%; padding: 18px 24px; background: none; border: none;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; text-align: right; font-size: 1rem; font-weight: 600;
+            transition: 0.2s; color: var(--dark);
+        }
+        .accordion-btn:hover { background: #f8fafc; }
+        .accordion-btn.active { background: #eff6ff; color: var(--primary); }
+        
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+            background: white;
+        }
+
+        /* Lists */
+        .lecture-list {
+            list-style: none; padding: 0;
+            max-height: 300px; /* Scrollable area */
+            overflow-y: auto;
+        }
+        .lecture-list::-webkit-scrollbar { width: 6px; }
+        .lecture-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        .lecture-item {
+            padding: 10px 24px; border-bottom: 1px solid #f8fafc;
+            display: flex; justify-content: space-between; font-size: 0.9rem; color: #475569;
+        }
+        .lecture-item:last-child { border-bottom: none; }
+        .lecture-time { font-family: monospace; font-weight: 700; color: var(--primary); }
+        
+        .count-badge {
+            background: #e0f2fe; color: #0284c7; padding: 2px 8px; 
+            border-radius: 4px; font-size: 0.8rem; margin-right: 8px;
+        }
+
+        .module-meta { font-size: 0.85rem; color: #64748b; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: 0; } }
+        
+        .winner-banner {
+            background: #dcfce7; color: #166534; padding: 15px; margin-bottom: 20px;
+            border-radius: 12px; text-align: center; font-weight: 700; border: 1px dashed #166534;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>الموسوعة الطبية الشاملة</h1>
+        <p>تحليل ومقارنة مناهج الباطنة والأطفال</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('medicine')">الباطنة (Internal Medicine)</button>
+            <button class="tab-btn" onclick="openTab('pediatrics')">الأطفال (Pediatrics)</button>
+        </div>
+
+        <div id="medicine" class="content-section active">
+            <div class="winner-banner">
+                🏆 الفائز بالوقت: د. حيدر عبد الرضا (180 ساعة) - يوفر عليك 64 ساعة
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="doc-name">د. هيثم</div>
+                            <span class="doc-badge">المنهج التفصيلي</span>
+                        </div>
+                        <div class="total-time">244 ساعة</div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neurology</span>
+                            <span class="module-meta"><span class="count-badge">59 محاضرة</span> 34:27 ساعة</span>
+                        </button>
+                         <div class="accordion-content">
+                            <ul class="lecture-list">
+                                <li class="lecture-item"><span>Stroke Management</span><span class="lecture-time">63m</span></li>
+                                <li class="lecture-item"><span>Multiple Sclerosis Pt.1</span><span class="lecture-time">64m</span></li>
+                                <li class="lecture-item"><span>Epilepsy Management</span><span class="lecture-time">52m</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Cardiology</span>
+                            <span class="module-meta"><span class="count-badge">67 محاضرة</span> 33:43 ساعة</span>
+                        </button>
+                        <div class="accordion-content">
+                            <ul class="lecture-list">
+                                <li class="lecture-item"><span>Heart Failure Pt.1</span><span class="lecture-time">44m</span></li>
+                                <li class="lecture-item"><span>Aortic Aneurysm</span><span class="lecture-time">61m</span></li>
+                                <li class="lecture-item"><span>ECG Included</span><span class="lecture-time">Yes</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Nephrology</span>
+                            <span class="module-meta"><span class="count-badge">48 محاضرة</span> 30:43 ساعة</span>
+                        </button>
+                         <div class="accordion-content">
+                            <ul class="lecture-list">
+                                <li class="lecture-item"><span>Acid-Base Physiology</span><span class="lecture-time">90m</span></li>
+                                <li class="lecture-item"><span>Hyperkalemia</span><span class="lecture-time">60m</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Gastroenterology</span>
+                            <span class="module-meta"><span class="count-badge">48 محاضرة</span> 28:50 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hematology</span>
+                            <span class="module-meta"><span class="count-badge">48 محاضرة</span> 26:43 ساعة</span>
+                        </button>
+                    </div>
+
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Respiratory</span>
+                            <span class="module-meta"><span class="count-badge">45 محاضرة</span> 23:53 ساعة</span>
+                        </button>
+                    </div>
+
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Endocrinology</span>
+                            <span class="module-meta"><span class="count-badge">31 محاضرة</span> 23:11 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Rheumatology</span>
+                            <span class="module-meta"><span class="count-badge">38 محاضرة</span> 22:44 ساعة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="doc-name">د. حيدر</div>
+                            <span class="doc-badge">المنهج المكثف</span>
+                        </div>
+                        <div class="total-time" style="background:var(--success)">180 ساعة</div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neurology</span>
+                            <span class="module-meta"><span class="count-badge">34 فيديو</span> 31 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Cardiology + ECG</span>
+                            <span class="module-meta"><span class="count-badge">54 فيديو</span> 33 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Respiratory + CXR</span>
+                            <span class="module-meta"><span class="count-badge">40 فيديو</span> 26 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Nephrology</span>
+                            <span class="module-meta" style="color:var(--success)"><span class="count-badge">20 فيديو</span> 17 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hepatology & GIT</span>
+                            <span class="module-meta"><span class="count-badge">39 فيديو</span> 23 ساعة</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hematology</span>
+                            <span class="module-meta"><span class="count-badge">31 فيديو</span> 26 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Endocrine</span>
+                            <span class="module-meta"><span class="count-badge">31 فيديو</span> 24 ساعة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pediatrics" class="content-section">
+            <div class="winner-banner" style="background:#dbeafe; color:#1e40af; border-color:#1e40af">
+                🏆 الفائز بالوقت: د. هيثم (65.5 ساعة) - يوفر عليك 5.5 ساعات
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="doc-name">د. هيثم</div>
+                            <span class="doc-badge">محاضرات مفصلة</span>
+                        </div>
+                        <div class="total-time" style="background:var(--success)">65.5 ساعة</div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Endocrinology</span>
+                            <span class="module-meta"><span class="count-badge">14 محاضرة</span> 7:05 ساعة</span>
+                        </button>
+                        <div class="accordion-content">
+                            <ul class="lecture-list">
+                                <li class="lecture-item"><span>Diabetes Mellitus (1&2)</span><span class="lecture-time">80m</span></li>
+                                <li class="lecture-item"><span>DKA</span><span class="lecture-time">42m</span></li>
+                                <li class="lecture-item"><span>Thyroid Disorders</span><span class="lecture-time">56m</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neonatology</span>
+                            <span class="module-meta"><span class="count-badge">11 محاضرة</span> 6:35 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>General Pediatrics</span>
+                            <span class="module-meta"><span class="count-badge">9 محاضرات</span> 6:14 ساعة</span>
+                        </button>
+                         <div class="accordion-content">
+                            <ul class="lecture-list">
+                                <li class="lecture-item"><span>Immunization Pt.1</span><span class="lecture-time">79m</span></li>
+                                <li class="lecture-item"><span>Immunization Pt.2</span><span class="lecture-time">56m</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Diarrhea & Dehydration</span>
+                            <span class="module-meta"><span class="count-badge">13 محاضرة</span> 4:50 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neurology</span>
+                            <span class="module-meta"><span class="count-badge">13 محاضرة</span> 4:54 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hematology</span>
+                            <span class="module-meta"><span class="count-badge">17 محاضرة</span> 4:47 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Cardiology</span>
+                            <span class="module-meta"><span class="count-badge">13 محاضرة</span> 4:16 ساعة</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Pulmonology</span>
+                            <span class="module-meta"><span class="count-badge">10 محاضرات</span> 4:12 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Immunology</span>
+                            <span class="module-meta"><span class="count-badge">7 محاضرات</span> 4:09 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Infectious Diseases</span>
+                            <span class="module-meta"><span class="count-badge">10 محاضرات</span> 3:57 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Nephrology</span>
+                            <span class="module-meta"><span class="count-badge">9 محاضرات</span> 3:53 ساعة</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Jaundice & GIT</span>
+                            <span class="module-meta"><span class="count-badge">11 محاضرة</span> 3:49 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hepatology (Liver)</span>
+                            <span class="module-meta"><span class="count-badge">5 محاضرات</span> 2:46 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Genetics</span>
+                            <span class="module-meta"><span class="count-badge">7 محاضرات</span> 2:17 ساعة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Emergencies</span>
+                            <span class="module-meta"><span class="count-badge">9 محاضرات</span> 2:02 ساعة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="doc-name">د. حيدر</div>
+                            <span class="doc-badge">System-Based</span>
+                        </div>
+                        <div class="total-time">71 ساعة</div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>GIT & Nutrition</span>
+                            <span class="module-meta"><span class="count-badge">20 فيديو</span> 12:00 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neonatology</span>
+                            <span class="module-meta"><span class="count-badge">19 فيديو</span> 10:30 ساعة</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Hematology</span>
+                            <span class="module-meta"><span class="count-badge">14 فيديو</span> 10:00 ساعات</span>
+                        </button>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Respiratory</span>
+                            <span class="module-meta"><span class="count-badge">15 فيديو</span> 8:00 ساعات</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Infectious</span>
+                            <span class="module-meta"><span class="count-badge">12 فيديو</span> 7:30 ساعات</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Nephrology</span>
+                            <span class="module-meta"><span class="count-badge">6 فيديو</span> 7:00 ساعات</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Cardiology</span>
+                            <span class="module-meta"><span class="count-badge">10 فيديو</span> 6:00 ساعات</span>
+                        </button>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Neurology</span>
+                            <span class="module-meta"><span class="count-badge">6 فيديو</span> 5:00 ساعات</span>
+                        </button>
+                    </div>
+                    
+                     <div class="accordion-item">
+                        <button class="accordion-btn">
+                            <span>Endocrinology</span>
+                            <span class="module-meta"><span class="count-badge">5 فيديو</span> 5:00 ساعات</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        const accordions = document.querySelectorAll('.accordion-btn');
+        accordions.forEach(acc => {
+            acc.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
